@@ -2,14 +2,17 @@ import os
 from datetime import datetime, timedelta
 
 from todoist_api_python.api import TodoistAPI
+from dotenv import load_dotenv
 
-api = TodoistAPI(os.getenv('TODOIST_API_KEY'))
-
-last_checked = datetime.now() - timedelta(days=1)
+load_dotenv()
 
 
-def get_tasks_since_last_checked():
-    tasks = api.get_tasks()
-    return [task for task in tasks if datetime.strptime(task.created_at, '%Y-%m-%dT%H:%M:%S.%fZ') > last_checked]
+class Todoist:
+    def __init__(self):
+        self._api = TodoistAPI(os.getenv("TODOIST_API_KEY"))
+        self.last_checked = datetime.now() - timedelta(days=1)
 
-print(get_tasks_since_last_checked())
+    def get_tasks(self):
+        tasks = self._api.get_tasks()
+        return [task for task in tasks if
+                datetime.strptime(task.created_at, '%Y-%m-%dT%H:%M:%S.%fZ') > self.last_checked]
