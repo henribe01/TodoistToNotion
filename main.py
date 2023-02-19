@@ -1,14 +1,12 @@
+from datetime import datetime
+
 from dotenv import load_dotenv
 from todoist import Todoist
-from notion import add_task
+from config import get_config
 
 if __name__ == '__main__':
     load_dotenv()
     todoist = Todoist()
-    tasks = todoist.get_tasks()
-    for task in tasks:
-        due = None
-        if task.due:
-            due = task.due.date
-        add_task(task.content, due, task.labels)
-
+    config = get_config()
+    tasks = todoist.get_tasks(datetime.strptime(config['LAST_SYNCED'], '%Y-%m-%d %H:%M:%S.%f'))
+    print(tasks)
