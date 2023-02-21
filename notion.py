@@ -14,6 +14,9 @@ data = {"parent": {'type': 'database_id',
 
 
 class Notion:
+    # TODO: Add function to update page
+    # TODO: Add function to delete page
+    # TODO: Add error handling
     def __init__(self, database_id):
         self.database_id = database_id
         self.database = self.get_database()
@@ -28,7 +31,7 @@ class Notion:
         :return: A dictonary of properties
         """
         # Makes a copy of the properties of the database if it is in kwargs
-        properties = {key: value for key, value in self.database['properties'].items() if key in kwargs}
+        properties = {key: value.copy() for key, value in self.database['properties'].items() if key in kwargs}
         for key, value in properties.items():
             # Deletes the name because notion doesn't like it
             del properties[key]['name']
