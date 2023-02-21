@@ -14,16 +14,12 @@ data = {"parent": {'type': 'database_id',
 
 
 class Notion:
-    database = None
+    def __init__(self, database_id):
+        self.database_id = database_id
+        self.database = self.get_database()
 
-    @classmethod
-    def refresh_database(cls):
-        cls.database = requests.get(api_url + 'databases/' + os.getenv('NOTION_DB_ID'), headers=headers).json()
-
-    def __init__(self):
-        if Notion.database is None:
-            Notion.refresh_database()
-        self.database = Notion.database
+    def get_database(self):
+        return requests.get(api_url + 'databases/' + self.database_id, headers=headers).json()
 
     def create_property(self, **kwargs):
         """
@@ -49,6 +45,8 @@ class Notion:
                 properties[key][type] = [{'text': {'content': kwargs[key]}}]
             elif type == 'date':
                 properties[key][type] = {'start': kwargs[key]}
+            elif type == 'rich_text':
+                properties[key][type] = [{'type': 'text', 'text': {'content': kwargs[key]}}]
             else:
                 properties[key][type] = kwargs[key]
         return properties
@@ -61,6 +59,20 @@ class Notion:
         data['properties'] = properties
         return requests.post(api_url + 'pages', headers=headers, json=data).json()
 
+    def get_pages(self, **kwargs):
+        """
+        Gets all the pages from the database
+        :param kwargs: filters (name of property: condition(dict))
+        :return: A list of pages
+        """
+        # TODO: Change so that it can handle multiple filters
+        filters = {'and': [], 'or': []}
+        for key, value in kwargs.items():
+            type = self.database['properties'][key]['type']
+            filters['and'].append({'property': key, type: value})
+        return requests.post(api_url + f'databases/{self.database_id}/query', headers=headers,
+                             json={'filter': filters}).json()['results']
 
-notion = Notion()
-property = notion.create_property(Name='Test', Datum='2021-12-31', Fach='Numerik', Tags=['Uni', 'Heute'])
+# notion = Notion(os.getenv('NOTION_DB_ID'))
+# property = notion.create_property(Name='Test', Datum='2021-12-31', Fach='Numerik', Tags=['Uni', 'Heute'])
+# print(notion.get_pages(Tags={'contains': 'Heute'}))

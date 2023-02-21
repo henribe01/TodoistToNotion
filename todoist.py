@@ -31,3 +31,10 @@ class Todoist:
         """
         tasks = self._api.get_tasks()
         return [task for task in tasks if tag in task.labels]
+
+    def get_project_from_id(self, project_id):
+        """
+        Passing project id while give the project
+        :return:
+        """
+        pass
