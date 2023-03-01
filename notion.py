@@ -72,7 +72,6 @@ class Notion:
         return requests.post(f'{Notion.api_url}databases/{self.database_id}/query', headers=Notion.headers).json()
 
 
-notion = Notion(os.getenv('NOTION_DB_ID'))
-properties = notion.create_property(Name='test', Datum='2023-02-24', Tags=['Uni', 'test123'],
-                                    TodoistID='8123887asdj')
-print(notion.get_pages()['results'][0])
+#notion = Notion(os.getenv('NOTION_DB_ID'))
+#properties = notion.create_property(Name='test', Datum='2023-02-24', Tags=['Uni', 'test123'],TodoistID='8123887asdj')
+#print(notion.get_pages()['results'][0])
