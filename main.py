@@ -31,21 +31,17 @@ def sync_tasks(todoist: Todoist, notion: Notion):
     # Get all notion tasks and create a list of all their todoist ids
     pages = notion.get_pages()
     pages_todoist_ids = [page['properties']['TodoistID']['rich_text'][0]['text']['content'] for page in pages]
-    print(pages_todoist_ids)
-    print(tasks)
     for task in tasks:
         if task.id not in pages_todoist_ids:
             if task.due is None:
                 properties = notion.create_property(Name=task.content, TodoistID=task.id)
             else:
                 properties = notion.create_property(Name=task.content, TodoistID=task.id, Datum=task.due.date)
-            print(properties)
-            print(notion.create_page(properties))
 
     # Refresh the Last synced date in the config
     now = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M')
-    #config['DEFAULT']['LAST_SYNCED'] = now
-    #write_config(config)
+    # config['DEFAULT']['LAST_SYNCED'] = now
+    # write_config(config)
 
 
 if __name__ == '__main__':
